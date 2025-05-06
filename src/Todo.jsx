@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { InputTodo } from "./conponents/InputTodo";
+import { InConpleatTodos } from "./conponents/InCompleateTodo";
+import { ConpleatTodos } from "./conponents/CompleateTodo";
 
 export const Todo = () =>{
   const [todoText , setTodoText] = useState("");
@@ -11,39 +14,47 @@ export const Todo = () =>{
     sertInConpleatTodos(newTodos);
     setTodoText("");
   }
+  const onClickDeleat = (index) => {
+    const newTodos = [...inConpleatTodos];
+    newTodos.splice(index , 1);
+    sertInConpleatTodos(newTodos);
+  }
+  const onClickCompleat = (index) => {
+    const newTodos = [...inConpleatTodos];
+    const newCompleatTodos = [...conpleatTodos , newTodos[index]];
+    sertConpleatTodos(newCompleatTodos);
+    newTodos.splice(index , 1);
+    sertInConpleatTodos(newTodos);
+  }
+  const onClickInCompleat = (index) => {
+    const newTodos = [...conpleatTodos];
+    const newInCompleatTodos = [...inConpleatTodos , newTodos[index]];
+    sertInConpleatTodos(newInCompleatTodos);
+    newTodos.splice(index , 1);
+    sertConpleatTodos(newTodos);
+  }
+  const disabledMax = inConpleatTodos.length >=5
   return(
     <>
-    <div className="input-area">
-      <input placeholder="TODO" value={todoText} onChange={onChangeTodoText}/>
-      <button onClick={onClickAdd}>追加</button>
-    </div>
-    <div className="incomplete-area">
-      <p className="title">未完了のTODO</p>
-      <ul>
-        {inConpleatTodos.map( (todo) => (
-          <li key={todo}>
-            <div className="list-row">
-              <p className="todo-item">{todo}</p>
-              <button>完了</button>
-              <button>削除</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-      </div>
-    <div className="complete-area">
-    <p className="title">完了のTODO</p>
-      <ul>
-        {conpleatTodos.map((todo) => (
-          <li key={todo}>
-            <div className="list-row">
-              <p className="todo-item">{todo}</p>
-              <button>戻す</button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <InputTodo 
+      todoText={todoText} 
+      onChange={onChangeTodoText} 
+      onClick={onClickAdd}
+      disabled={disabledMax}
+    />
+    {disabledMax >= 5 && (
+      <p>消化しなさーいこらー</p>
+    )}
+
+    <InConpleatTodos
+      todos={inConpleatTodos}
+      onClickDeleat={onClickDeleat}
+      onClickCompleat = {onClickCompleat}
+    />
+    <ConpleatTodos
+      todos={conpleatTodos}
+      onClickInCompleat={onClickInCompleat}
+    />
     </>
   );
 };
